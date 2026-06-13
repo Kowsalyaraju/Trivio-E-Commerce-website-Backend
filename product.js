@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -11,9 +12,7 @@ const dns = require("dns");
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 mongoose
-  .connect(
-    "mongodb+srv://kowsalya:12345@cluster0.cp9ikw6.mongodb.net/trivio?appName=Cluster0",
-  )
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("Database Connected"))
   .catch((err) => console.log(err));
 
@@ -63,8 +62,8 @@ const Order = mongoose.model("Order", OrderSchema);
 //razorpay
 
 const razorpay = new Razorpay({
-  key_id: "rzp_test_T1BbTnLtdITiti",
-  key_secret: "KM0Pqi6MyAP0gJqo7DCFfCcZ",
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 app.get("/products", async (req, res) => {
@@ -137,7 +136,6 @@ app.get("/orders", async (req, res) => {
   }
 });
 
-
 //razorpay API
 
 app.post("/create-order", async (req, res) => {
@@ -157,6 +155,8 @@ app.post("/create-order", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server Started...");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server Started on ${PORT}`);
 });
